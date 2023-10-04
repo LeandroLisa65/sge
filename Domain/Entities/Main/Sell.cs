@@ -2,7 +2,7 @@ using Domain.Entities.Utils;
 
 namespace Domain.Entities;
 
-public class Sell : Auditable
+public class Sell : AuditableEntity
 {
     public Sell()
     {

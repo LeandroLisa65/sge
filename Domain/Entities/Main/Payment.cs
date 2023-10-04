@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-public class Payment : Auditable
+public class Payment : AuditableEntity
 {
     
 }

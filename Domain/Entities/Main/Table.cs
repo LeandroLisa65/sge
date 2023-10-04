@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-public class Table : Auditable
+public class Table : AuditableEntity
 {
     public Table()
     {

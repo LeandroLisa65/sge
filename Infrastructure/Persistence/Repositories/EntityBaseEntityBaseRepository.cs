@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories;
 
-public class Repository<T> : IRepository<T> where T : EntityBase 
+public class EntityBaseEntityBaseRepository<T> : IEntityBaseRepository<T> where T : EntityBase 
 {
     private readonly ApplicationDbContext _applicationDbContext;
 
-    public Repository(ApplicationDbContext applicationDbContext)
+    public EntityBaseEntityBaseRepository(ApplicationDbContext applicationDbContext)
     {
         _applicationDbContext = applicationDbContext;
     }

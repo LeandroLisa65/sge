@@ -1,13 +1,12 @@
 ﻿#region
 
 using System.Net;
-using Application;
 using ATC.Domain.Exceptions;
 using FluentValidation.Results;
 
 #endregion
 
-namespace ATC.Application.Services;
+namespace Application.Services;
 
 public static class ResponseDataHandler
 {

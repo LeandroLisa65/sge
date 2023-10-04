@@ -3,7 +3,7 @@ using System.Security.AccessControl;
 
 namespace Domain.Entities;
 
-public class Product : Auditable
+public class Product : AuditableEntity
 {
     public Product()
     {

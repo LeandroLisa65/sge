@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-public class Category : Auditable
+public class Category : AuditableEntity
 {
     public Category()
     {

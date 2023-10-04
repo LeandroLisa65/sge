@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-public class Price : Auditable
+public class Price : AuditableEntity
 {
     public decimal PriceValue { get; set; }
 }

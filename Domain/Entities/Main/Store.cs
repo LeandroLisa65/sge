@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-public class Store : Auditable
+public class Store : AuditableEntity
 {
     public string? Name { get; set; }
 }

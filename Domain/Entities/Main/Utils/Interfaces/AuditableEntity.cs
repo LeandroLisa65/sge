@@ -1,8 +1,8 @@
 namespace Domain.Entities;
 
-public class Auditable : EntityBase, IAuditable
+public class AuditableEntity : EntityBase, IAuditable
 {
-    public Auditable()
+    public AuditableEntity()
     {
         CreatedBy = string.Empty;
         CreatedDate = DateTime.Now;
