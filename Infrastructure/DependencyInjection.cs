@@ -1,6 +1,8 @@
 using Application.Common.Persistance;
+using Application.Common.Persistance.Repositories;
 using Infrastructure.Common.Helpers;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +20,13 @@ public static class DependencyInjection
             });
         });
 
+        return services;
+    }
+
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    {
+        services.AddScoped(typeof(IEntityBaseRepository<>), typeof(AuditableRepository<>));
+        services.AddScoped(typeof(IEntityBaseRepository<>),typeof(EntityBaseRepository<>));
         return services;
     }
 }
