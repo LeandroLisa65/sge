@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Infrastructure.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class FirstMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,6 +70,25 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Costs",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CostValue = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    LastChangeDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastChangeBy = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Costs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 schema: "dbo",
                 columns: table => new
@@ -85,6 +104,25 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Prices",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PriceValue = table.Column<decimal>(type: "numeric", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    LastChangeDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastChangeBy = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -164,6 +202,8 @@ namespace Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Description = table.Column<string>(type: "text", nullable: false),
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
+                    CostId = table.Column<long>(type: "bigint", nullable: false),
+                    PriceId = table.Column<long>(type: "bigint", nullable: false),
                     ProviderId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
@@ -179,6 +219,20 @@ namespace Infrastructure.Migrations
                         column: x => x.CategoryId,
                         principalSchema: "dbo",
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Costs_CostId",
+                        column: x => x.CostId,
+                        principalSchema: "dbo",
+                        principalTable: "Costs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Prices_PriceId",
+                        column: x => x.PriceId,
+                        principalSchema: "dbo",
+                        principalTable: "Prices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -261,14 +315,13 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Costs",
+                name: "ProductCostHistories",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CostValue = table.Column<decimal>(type: "numeric", nullable: false),
-                    ProductId = table.Column<long>(type: "bigint", nullable: true),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     LastChangeDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -277,24 +330,24 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Costs", x => x.Id);
+                    table.PrimaryKey("PK_ProductCostHistories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Costs_Products_ProductId",
+                        name: "FK_ProductCostHistories_Products_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "dbo",
                         principalTable: "Products",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Prices",
+                name: "ProductPriceHistories",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PriceValue = table.Column<decimal>(type: "numeric", nullable: false),
-                    ProductId = table.Column<long>(type: "bigint", nullable: true),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     LastChangeDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -303,13 +356,14 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Prices", x => x.Id);
+                    table.PrimaryKey("PK_ProductPriceHistories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Prices_Products_ProductId",
+                        name: "FK_ProductPriceHistories_Products_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "dbo",
                         principalTable: "Products",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -395,21 +449,21 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Costs_ProductId",
-                schema: "dbo",
-                table: "Costs",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_RoleId",
                 schema: "dbo",
                 table: "Permissions",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Prices_ProductId",
+                name: "IX_ProductCostHistories_ProductId",
                 schema: "dbo",
-                table: "Prices",
+                table: "ProductCostHistories",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductPriceHistories_ProductId",
+                schema: "dbo",
+                table: "ProductPriceHistories",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -417,6 +471,18 @@ namespace Infrastructure.Migrations
                 schema: "dbo",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CostId",
+                schema: "dbo",
+                table: "Products",
+                column: "CostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_PriceId",
+                schema: "dbo",
+                table: "Products",
+                column: "PriceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_ProviderId",
@@ -482,15 +548,15 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Costs",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
                 name: "Permissions",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Prices",
+                name: "ProductCostHistories",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "ProductPriceHistories",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -515,6 +581,14 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Costs",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Prices",
                 schema: "dbo");
 
             migrationBuilder.DropTable(

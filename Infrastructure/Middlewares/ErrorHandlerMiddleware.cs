@@ -1,16 +1,16 @@
 #region
 
 using System.Net;
-using Application.Services;
 using ATC.Domain.Exceptions;
 using Infrastructure.Common;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Response;
 
 #endregion
 
-namespace ATC.Infrastructure.Middlewares;
+namespace Infrastructure.Middlewares;
 
 public class ErrorHandlerMiddleware
 {
@@ -23,7 +23,7 @@ public class ErrorHandlerMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context, ICloudWatchLogger cloudWatchLogger)
+    public async Task Invoke(HttpContext context)
     {
         try
         {
@@ -58,7 +58,7 @@ public class ErrorHandlerMiddleware
             NamingStrategy = new CamelCaseNamingStrategy()
         };
 
-        var error = ResponseDataHandler.Error(exception);
+        var error = new ResponseDataHandler().Error(exception);
         var result = JsonConvert.SerializeObject(error, new JsonSerializerSettings
         {
             ContractResolver = contractResolver

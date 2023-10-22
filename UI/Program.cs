@@ -1,11 +1,9 @@
 #region
 
-
-
-#endregion
-
 using Application;
 using Infrastructure;
+
+#endregion
 
 namespace UI;
 
@@ -23,7 +21,10 @@ internal static class Program
     private static WebApplicationBuilder LoadDependencies(WebApplicationBuilder builder)
     {
         builder.Services
-            .AddPostgresDbContext();
+            .AddInfrastructureServices()
+            .AddApplicationServices()
+            .AddPostgresDbContext()
+            .AddUIDependencies();
 
         return builder;
     }
@@ -33,14 +34,10 @@ internal static class Program
         var app = builder.Build();
 
         app.UseCommonApplication();
-
-        //app.UseMiddleware<ParameterValidationMiddleware>();
-
-        //app.MapClientEndpoints();
-
+        
+        app.MapControllers();
         app.MapGet("/", () => "Welcome to running ASP.NET Core Minimal API on AWS Lambda");
-
-        //app.AddMiddlewares();
+        app.AddMiddlewares();
 
         app.Run();
     }

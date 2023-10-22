@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{068D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{EB4A0860-74C8-4090-8D25-1E67444C8DB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Response", "Response\Response.csproj", "{A52028F4-A3A5-43D9-8601-5B3FB5CA524A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{EB4A0860-74C8-4090-8D25-1E67444C8DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB4A0860-74C8-4090-8D25-1E67444C8DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB4A0860-74C8-4090-8D25-1E67444C8DB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A52028F4-A3A5-43D9-8601-5B3FB5CA524A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A52028F4-A3A5-43D9-8601-5B3FB5CA524A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A52028F4-A3A5-43D9-8601-5B3FB5CA524A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A52028F4-A3A5-43D9-8601-5B3FB5CA524A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

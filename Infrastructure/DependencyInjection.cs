@@ -25,8 +25,9 @@ public static class DependencyInjection
 
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        services.AddScoped(typeof(IEntityBaseRepository<>), typeof(AuditableRepository<>));
+        services.AddScoped(typeof(IAuditableRepository<>), typeof(AuditableRepository<>));
         services.AddScoped(typeof(IEntityBaseRepository<>),typeof(EntityBaseRepository<>));
+        
         return services;
     }
 }

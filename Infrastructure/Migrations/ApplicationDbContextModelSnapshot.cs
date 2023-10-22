@@ -148,12 +148,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("LastChangeDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("ProductId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Costs", "dbo");
                 });
@@ -239,12 +234,7 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("PriceValue")
                         .HasColumnType("numeric");
 
-                    b.Property<long?>("ProductId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Prices", "dbo");
                 });
@@ -259,6 +249,9 @@ namespace Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CostId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("CreatedBy")
@@ -281,6 +274,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("LastChangeDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long>("PriceId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ProviderId")
                         .HasColumnType("bigint");
 
@@ -288,9 +284,83 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CostId");
+
+                    b.HasIndex("PriceId");
+
                     b.HasIndex("ProviderId");
 
                     b.ToTable("Products", "dbo");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ProductCostHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastChangeBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastChangeDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCostHistories", "dbo");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ProductPriceHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LastChangeBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastChangeDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductPriceHistories", "dbo");
                 });
 
             modelBuilder.Entity("Domain.Entities.Provider", b =>
@@ -567,13 +637,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Users", "dbo");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Cost", b =>
-                {
-                    b.HasOne("Domain.Entities.Product", null)
-                        .WithMany("Costs")
-                        .HasForeignKey("ProductId");
-                });
-
             modelBuilder.Entity("Domain.Entities.Permission", b =>
                 {
                     b.HasOne("Domain.Entities.Role", null)
@@ -581,18 +644,23 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("RoleId");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Price", b =>
-                {
-                    b.HasOne("Domain.Entities.Product", null)
-                        .WithMany("Prices")
-                        .HasForeignKey("ProductId");
-                });
-
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.HasOne("Domain.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Cost", "Cost")
+                        .WithMany()
+                        .HasForeignKey("CostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Price", "Price")
+                        .WithMany()
+                        .HasForeignKey("PriceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -604,7 +672,33 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Category");
 
+                    b.Navigation("Cost");
+
+                    b.Navigation("Price");
+
                     b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ProductCostHistory", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ProductPriceHistory", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>
@@ -685,13 +779,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Company", b =>
                 {
                     b.Navigation("Stores");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Product", b =>
-                {
-                    b.Navigation("Costs");
-
-                    b.Navigation("Prices");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>

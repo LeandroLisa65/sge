@@ -1,4 +1,4 @@
 ﻿namespace Contract.Entities;
 
-public record EntityBaseResponse(long id);
+public record EntityBaseResponse(long Id);
 

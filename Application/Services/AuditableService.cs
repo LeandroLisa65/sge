@@ -5,53 +5,31 @@ using AutoMapper;
 using Contract.Entities;
 using Domain.Entities;
 using FluentValidation;
+using Response;
 
 namespace Application.Services;
 
-public class AuditableService<TEntity, TResponse> : IAuditableService<TEntity, TResponse>
+public class AuditableService<TEntity, TResponse> : BaseService<TEntity, TResponse> ,IAuditableService<TEntity, TResponse>
 where TEntity : AuditableEntity
 where TResponse : EntityBaseResponse
 {
-    private readonly IEntityBaseRepository<TEntity> _repository;
+    private readonly IAuditableRepository<TEntity> _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<TEntity> _validator;
 
     public AuditableService
         (
-            IEntityBaseRepository<TEntity> repository
+            IAuditableRepository<TEntity> repository
             , IMapper mapper
             , IValidator<TEntity> validator
-        )
+        ) : base(repository, mapper, validator)
     {
         _repository = repository;
         _mapper = mapper;
         _validator = validator;
     }
-    public virtual async Task<ResponseData<TResponse>> GetAsync(long? id)
-    {
-        var entity = await ValidateEntityExistanceById(id);
 
-        var result = _mapper.Map<TEntity, TResponse>(entity);
-
-        return ResponseDataHandler.Ok(result);
-    }
-
-    public virtual async Task<ResponseData<long>> AddAsync(TEntity entity)
-    {
-        var validationResult = await _validator.ValidateAsync(entity);
-
-        if (!validationResult.IsValid)
-            return ResponseDataHandler.Validation<long>(validationResult);
-
-        var result = await _repository.AddAsync(entity);
-
-#if !DEBUG
-        await _logService.LogParametryAction(AuditoryActions.Create, entity);
-#endif
-        return ResponseDataHandler.Created(result);
-    }
-
-    public virtual async Task<ResponseData<TResponse>> UpdateAsync(TEntity entity)
+    public override async Task<ResponseData<TResponse>> UpdateAsync(TEntity entity)
     {
         var retrievedEntity = await ValidateEntityExistanceById(entity.Id);
         entity.IsActive = retrievedEntity.IsActive;
@@ -61,57 +39,11 @@ where TResponse : EntityBaseResponse
         var validationResult = _validator.Validate(entity);
 
         if (!validationResult.IsValid)
-            return ResponseDataHandler.Validation<TResponse>(validationResult);
+            return new ResponseDataHandler().Validation<TResponse>(validationResult);
 
         await _repository.UpdateAsync(entity);
 
-        return ResponseDataHandler.Ok<TResponse>();
-    }
-
-    public virtual async Task<ResponseData<TResponse>> DeleteAsync(long? id)
-    {
-        var entity = await ValidateEntityExistanceById(id);
-        //entity.LastChangeBy = await _userService.GetUserEmailAsync();
-
-        await _repository.DeleteAsync(entity);
-
-        return ResponseDataHandler.Ok<TResponse>();
-    }
-
-    public async Task<ResponseData<IEnumerable<TResponse>>> GetAllAsync()
-    {
-        var response = await _repository.GetAllAsync();
-
-        var result = _mapper.Map<IEnumerable<TEntity>, IEnumerable<TResponse>>(response);
-
-        return ResponseDataHandler.Ok(result);
-    }
-
-    public async Task<ResponseData<TResponse>> GetAsync(Expression<Func<TEntity, bool>> predicate)
-    {
-        var entity = await ValidateEntityExistanceByPredicate(predicate);
-
-        var result = _mapper.Map<TEntity, TResponse>(entity);
-
-        return ResponseDataHandler.Ok(result);
-    }
-
-    public async Task<ResponseData<IEnumerable<TResponse>>> GetManyAsync(Expression<Func<TEntity, bool>> predicate)
-    {
-        var entities = await _repository.GetManyAsync(predicate);
-
-        var result = _mapper.Map<IEnumerable<TEntity>, IEnumerable<TResponse>>(entities);
-
-        return ResponseDataHandler.Ok(result);
-    }
-
-    protected async Task<TEntity> ValidateEntityExistanceByPredicate(Expression<Func<TEntity, bool>> filters)
-    {
-        var entity = await _repository.GetAsync(filters);
-
-        CheckIfNull(entity);
-
-        return entity!;
+        return new ResponseDataHandler().Ok<TResponse>();
     }
 
     #region Private methods

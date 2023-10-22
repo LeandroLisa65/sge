@@ -1,45 +1,45 @@
 ﻿#region
 
 using System.Net;
-using ATC.Domain.Exceptions;
 using FluentValidation.Results;
+using Response.Interfaces;
 
 #endregion
 
-namespace Application.Services;
+namespace Response;
 
-public static class ResponseDataHandler
+public class ResponseDataHandler : IResponseDataHandler
 {
-    public static ResponseData<T> Ok<T>(T result)
+    public ResponseData<T> Ok<T>(T result)
     {
         return new ResponseData<T>
         {
             Data = result,
-            StatusCode = System.Net.HttpStatusCode.OK,
+            StatusCode = HttpStatusCode.OK,
             Success = true
         };
     }
 
-    public static ResponseData<T> Ok<T>()
+    public ResponseData<T> Ok<T>()
     {
         return new ResponseData<T>
         {
-            StatusCode = System.Net.HttpStatusCode.OK,
+            StatusCode = HttpStatusCode.OK,
             Success = true
         };
     }
 
-    public static ResponseData<T> Created<T>(T result)
+    public ResponseData<T> Created<T>(T result)
     {
         return new ResponseData<T>
         {
             Data = result,
-            StatusCode = System.Net.HttpStatusCode.Created,
+            StatusCode = HttpStatusCode.Created,
             Success = true
         };
     }
 
-    public static ResponseData<T> Validation<T>(ValidationResult validationResult)
+    public ResponseData<T> Validation<T>(ValidationResult validationResult)
     {
         var errors = new List<string>();
 
@@ -49,12 +49,13 @@ public static class ResponseDataHandler
         return new ResponseData<T>
         {
             Message = errors,
-            StatusCode = System.Net.HttpStatusCode.BadRequest,
+            StatusCode = HttpStatusCode.BadRequest,
             Success = false
         };
     }
 
-    public static ResponseData<string> Error(Exception exception) {
+    public ResponseData<string> Error(Exception exception) 
+    {
         var errors = new List<string>();
         var ex = exception;
         errors.Add(ex.Message);
@@ -75,14 +76,10 @@ public static class ResponseDataHandler
         return response;
     }
 
-    private static HttpStatusCode GetHttpStatusCode(Exception exception)
+    public virtual HttpStatusCode GetHttpStatusCode(Exception exception)
     {
         switch (exception)
         {
-            case BadRequestException e:
-                return (HttpStatusCode)e.StatusCode;
-            case NotFoundException e:
-                return (HttpStatusCode)e.StatusCode;
             default:
                 return HttpStatusCode.InternalServerError;
         }

@@ -8,13 +8,11 @@ public class Product : AuditableEntity
     public Product()
     {
         Description = string.Empty;
-        Costs = new List<Cost>();
-        Prices = new List<Price>();
     }
     
     public string Description { get; set; }
     public virtual Category Category { get; set; }
-    public virtual ICollection<Cost> Costs { get; set; }
-    public virtual ICollection<Price> Prices { get; set; }
+    public virtual Cost Cost { get; set; }
+    public virtual Price Price { get; set; }
     public virtual Provider Provider { get; set; }
 }

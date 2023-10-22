@@ -27,4 +27,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<SellDetail> SellDetails { get; set; } = default!;
     public DbSet<Store> Stores { get; set; } = default!;
     public DbSet<Company> Companies { get; set; } = default!;
+    public DbSet<ProductCostHistory> ProductCostHistories { get; set; }
+    public DbSet<ProductPriceHistory> ProductPriceHistories { get; set; }
 }

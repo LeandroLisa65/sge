@@ -2,12 +2,13 @@
 
 using System.Net;
 using Microsoft.AspNetCore.Http;
+using Response.Interfaces;
 
 #endregion
 
-namespace Application;
+namespace Response;
 
-public record class ResponseData<T> : IResult
+public class ResponseData<T> : IResponseData<T>
 {
     public ResponseData()
     {

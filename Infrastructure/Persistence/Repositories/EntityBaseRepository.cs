@@ -70,6 +70,7 @@ public class EntityBaseRepository<T> : IEntityBaseRepository<T> where T : Entity
     public virtual async Task UpdateAsync(T entity)
     {
         var retrievedEntity = await _applicationDbContext.Set<T>().FindAsync(entity.Id);
+        
         if(retrievedEntity is null)
             throw new NotFoundException($"Can't update entity {typeof(T).Name} not found entity with id: {entity.Id}");
 

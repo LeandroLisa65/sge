@@ -1,10 +1,11 @@
 using Contract.Entities;
 using Domain.Entities;
+using Response;
 
 namespace Application.Services;
 
 public interface IBaseService<TEntity, TResponse>
-    where TEntity : AuditableEntity
+    where TEntity : EntityBase
     where TResponse : EntityBaseResponse
 {
     Task<ResponseData<TResponse>> GetAsync(long? id);
