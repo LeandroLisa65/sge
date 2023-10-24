@@ -10,7 +10,6 @@ using Domain.Entities;
 namespace Application.Services;
 
 public class RequestMapperService<TRequest, TEntity> : IRequestMapperService<TRequest, TEntity>
-    where TRequest : EntityBaseRequest
     where TEntity : AuditableEntity
 {
     private readonly IMapper _mapper;

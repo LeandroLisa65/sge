@@ -29,9 +29,9 @@ where TResponse : EntityBaseResponse
         _validator = validator;
     }
 
-    public override async Task<ResponseData<TResponse>> UpdateAsync(TEntity entity)
+    public override async Task<ResponseData<TResponse>> UpdateAsync(long id, TEntity entity)
     {
-        var retrievedEntity = await ValidateEntityExistanceById(entity.Id);
+        var retrievedEntity = await ValidateEntityExistanceById(id);
         entity.IsActive = retrievedEntity.IsActive;
         entity.CreatedBy = retrievedEntity.CreatedBy;
         entity.CreatedDate = retrievedEntity.CreatedDate;
@@ -41,6 +41,7 @@ where TResponse : EntityBaseResponse
         if (!validationResult.IsValid)
             return new ResponseDataHandler().Validation<TResponse>(validationResult);
 
+        entity.Id = id;
         await _repository.UpdateAsync(entity);
 
         return new ResponseDataHandler().Ok<TResponse>();
@@ -54,21 +55,9 @@ where TResponse : EntityBaseResponse
 
         var entity = await _repository.GetAsync(id!.Value);
 
-        CheckIfNull(entity);
+        CheckIfNull(entity, id);
 
         return entity!;
-    }
-
-    private static void CheckIfNull(long? id)
-    {
-        if (id is null)
-            throw new ArgumentNullException(nameof(id));
-    }
-
-    private static void CheckIfNull(TEntity? entity)
-    {
-        if (entity is null)
-            throw new NotFoundException(nameof(entity));
     }
 
     #endregion
