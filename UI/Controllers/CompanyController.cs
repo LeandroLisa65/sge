@@ -62,15 +62,17 @@ public class CompanyController : ControllerBase
     }
     
     [HttpPut]
+    [Route("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> Put
     (
-        CompanyRequest companyRequest
+        long id
+        , CompanyRequest companyRequest
     )
     {
         var entity = await _mappingService.MapToEntityAsync(companyRequest);
-        var result = await _service.UpdateAsync(entity);
+        var result = await _service.UpdateAsync(id, entity);
 
         return new EndpointResult().GetEndpointResult(result);
     }

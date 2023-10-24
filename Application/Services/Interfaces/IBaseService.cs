@@ -10,6 +10,6 @@ public interface IBaseService<TEntity, TResponse>
 {
     Task<ResponseData<TResponse>> GetAsync(long? id);
     Task<ResponseData<long>> AddAsync(TEntity entity);
-    Task<ResponseData<TResponse>> UpdateAsync(TEntity entity);
+    Task<ResponseData<TResponse>> UpdateAsync(long id, TEntity entity);
     Task<ResponseData<TResponse>> DeleteAsync(long? id);
 }

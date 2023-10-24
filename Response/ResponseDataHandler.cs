@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Net;
+using ATC.Domain.Exceptions;
 using FluentValidation.Results;
 using Response.Interfaces;
 
@@ -80,6 +81,10 @@ public class ResponseDataHandler : IResponseDataHandler
     {
         switch (exception)
         {
+            case BadRequestException e:
+                return (HttpStatusCode)e.StatusCode;
+            case NotFoundException e:
+                return (HttpStatusCode)e.StatusCode;
             default:
                 return HttpStatusCode.InternalServerError;
         }

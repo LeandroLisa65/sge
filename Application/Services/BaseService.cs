@@ -50,9 +50,9 @@ public class BaseService<TEntity,TResponse> : IBaseService<TEntity,TResponse>
         return new ResponseDataHandler().Created(result);
     }
 
-    public virtual async Task<ResponseData<TResponse>> UpdateAsync(TEntity entity)
+    public virtual async Task<ResponseData<TResponse>> UpdateAsync(long id, TEntity entity)
     {
-        var retrievedEntity = await ValidateEntityExistanceById(entity.Id);
+        var retrievedEntity = await ValidateEntityExistanceById(id);
 
         var validationResult = _validator.Validate(entity);
 
@@ -118,22 +118,28 @@ public class BaseService<TEntity,TResponse> : IBaseService<TEntity,TResponse>
 
         var entity = await _repository.GetAsync(id!.Value);
 
-        CheckIfNull(entity);
+        CheckIfNull(entity, id);
 
         return entity!;
     }
 
-    private static void CheckIfNull(long? id)
+    private protected static void CheckIfNull(long? id)
     {
         if (id is null)
-            throw new ArgumentNullException(nameof(id));
+            throw new ArgumentNullException($"Parameter {nameof(id)} cannot be null");
     }
 
-    private static void CheckIfNull(TEntity? entity)
+    private protected static void CheckIfNull(TEntity? entity, long? id)
     {
         if (entity is null)
-            throw new NotFoundException(nameof(entity));
+            throw new NotFoundException($"Entity of type {typeof(TEntity).Name} with id {id} could not be found");
     }
 
+    private protected static void CheckIfNull(TEntity? entity)
+    {
+        if (entity is null)
+            throw new NotFoundException($"Entity {typeof(TEntity).Name} not found");
+    }
+    
     #endregion
 }
